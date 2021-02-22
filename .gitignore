@@ -2,3 +2,4 @@
 .DS_store
 visualizer.html
 tools/__pycache__
+package-lock.json

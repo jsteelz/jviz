@@ -1,0 +1,17 @@
+.itinerarylistparent {
+  margin-top: 5px;
+  padding: 5px;
+  border: 1px solid #14446b;
+  border-radius: 5px;
+  background-color: white;
+  border-radius: 5px;
+  cursor: default;
+}
+
+.itinerarylisttitle {
+  font-size: 15px;
+}
+
+.route-itinerary {
+  font-weight: bold;
+}

@@ -1,0 +1,15 @@
+.App {
+  text-align: center;
+  font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;
+  font-weight: 500;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: #14446b;
+}
+
+*:focus {
+  outline: none;
+}

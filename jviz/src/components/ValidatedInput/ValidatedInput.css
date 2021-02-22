@@ -1,0 +1,39 @@
+.validatedinputparent {
+  padding-bottom: 5px;
+}
+
+.validatedinput, .selectedvalue {
+  font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;
+  background-color: white;
+  border: 1px solid #14446b;
+  border-radius: 5px;
+  padding: 5px;
+  color: #14446b;
+  font-size: 15px;
+  overflow: scroll;
+  margin-top: 2.5px;
+  width: 175px;
+}
+
+.validatedinputtitle {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.invalid {
+  color: red;
+  font-size: 12px;
+  padding-top: 2.5px;
+}
+
+/* Gray out placeholder text w3schools */
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #91a5b0;
+  opacity: 1; /* Firefox */
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #91a5b0;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: #91a5b0;
+}

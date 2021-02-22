@@ -160,11 +160,22 @@ def convert_routes(routes_path, out_dir):
         exit(1)
     
   write_html.write_html(routes_obj)
- 
+  
+  route_list_info = []
   for route_jkey in routes_obj:
     out_path = os.path.join(out_dir, route_jkey + '.json')
+    route_info = {}
+    route_info['route_jkey'] = route_jkey
+    route_info['route_id'] = routes_obj[route_jkey]['route_id']
+    route_info['route_short_name'] = routes_obj[route_jkey]['route_short_name'] if 'route_short_name' in routes_obj[route_jkey].keys() else ''
+    route_info['route_long_name'] = routes_obj[route_jkey]['route_long_name'] if 'route_long_name' in routes_obj[route_jkey].keys() else ''
+    route_list_info.append(route_info)
     with open(out_path, 'w') as out:
       json.dump(routes_obj[route_jkey], out)
+  
+  out_path = os.path.join(out_dir, 'route_list_info.json')
+  with open(out_path, 'w') as out:
+    json.dump(route_list_info, out)
   
   return routes_obj
 

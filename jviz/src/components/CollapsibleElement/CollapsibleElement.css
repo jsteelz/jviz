@@ -1,0 +1,25 @@
+.collapsible-element {
+  border: 1px solid #14446b;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  background-color: white;
+}
+
+.title, .collapsible-content {
+  padding: 5px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  
+  /* https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting */
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}

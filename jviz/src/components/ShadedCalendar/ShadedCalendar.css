@@ -1,0 +1,25 @@
+table {
+  width: 100%;
+  table-layout: fixed;
+  background-color: white;
+  margin-top: 5px;
+}
+
+th, td {
+  text-align: center;
+  margin: auto;
+  padding: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+tr {
+  padding: none;
+  margin: none;
+}
+
+.shaded-date {
+  background-color: #30b566;
+  color: white;
+  border-radius: 5px;
+}

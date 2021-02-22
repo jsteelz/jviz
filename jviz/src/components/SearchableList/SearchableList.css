@@ -1,0 +1,55 @@
+.searchablelist {
+  margin-top: 5px;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border: 1px solid #14446b;
+  border-radius: 5px;
+  background-color: white;
+  border-radius: 5px;
+  cursor: default;
+}
+
+.routefilter {
+  font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;
+  background-color: white;
+  border: none;
+  border-bottom: 1px solid #14446b;
+  padding: 2.5px;
+  color: #14446b;
+  font-size: 15px;
+  overflow: scroll;
+  margin-top: 2.5px;
+  margin-bottom: 5px;
+  width: 175px;
+}
+
+.listtitle {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.listElement, .selectedElement {
+  overflow-x: hidden;
+  padding-bottom: 5px;
+}
+
+.listElement {
+  cursor: pointer;
+}
+
+.selectedElement {
+  margin-top: 2.5px;
+  margin-bottom: 2.5px;
+}
+
+.listkey {
+  font-weight: bold;
+  padding-right: 5px;
+}
+
+.backbutton {
+  cursor: pointer;
+  color: #91a5b0;
+  padding-right: 10px;
+}

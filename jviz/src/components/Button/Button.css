@@ -1,0 +1,12 @@
+.button {
+  font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;
+  background-color: white;
+  border: 1px solid #14446b;
+  border-radius: 5px;
+  margin-left: 2.5px;
+  padding: 5px;
+  color: #14446b;
+  font-size: 15px;
+  overflow: hidden;
+  cursor: pointer;
+}
