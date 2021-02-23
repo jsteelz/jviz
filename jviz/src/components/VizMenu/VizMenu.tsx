@@ -6,7 +6,7 @@ import SearchableList from '../SearchableList/SearchableList';
 import ItineraryList from '../ItineraryList/ItineraryList';
 import { Route } from '../common/GtfsTypes';
 import getJsonData from '../../components/common/getJsonData';
-import VizStore from '../../store/store';
+import { storeContext } from '../../store';
 
 interface VizMenuState {
   routes: Route[];
@@ -14,6 +14,8 @@ interface VizMenuState {
 
 @observer
 class VizMenu extends React.Component<any, VizMenuState> {
+  static contextType = storeContext;
+
   constructor(props: any) {
     super(props);
 
@@ -41,8 +43,8 @@ class VizMenu extends React.Component<any, VizMenuState> {
   }
 
   routeSelected = (routeJkey: string) => {
-    VizStore.route = this.state.routes.find((route) => route.route_jkey === routeJkey);
-    console.log(VizStore.route);
+    this.context.store.updateRoute(this.state.routes.find((route) => route.route_jkey === routeJkey));
+    console.log(this.context.store.route);
   }
 
   // Todo: make the date and time checkers stricter
@@ -57,11 +59,11 @@ class VizMenu extends React.Component<any, VizMenuState> {
   }
 
   onDateEntered = (date: string) => {
-    VizStore.date = date;
+    this.context.store.date = date;
   }
 
   onTimeEntered = (time: string) => {
-    let date = VizStore.date;
+    let date = this.context.store.date;
     if (!date) {
       const dateObj = new Date();
       let day = String(dateObj.getDate());
@@ -71,9 +73,9 @@ class VizMenu extends React.Component<any, VizMenuState> {
       const year = String(dateObj.getFullYear());
       date = `${year}${month}${day}`;
     }
-    VizStore.time = time;
-    VizStore.date = date;
-    console.log(VizStore.time);
+    this.context.store.time = time;
+    this.context.store.date = date;
+    console.log(this.context.store.time);
   }
 
   renderDatePicker = () => {
@@ -98,11 +100,13 @@ class VizMenu extends React.Component<any, VizMenuState> {
     );
   }
 
-  renderItineraries = () => {
-    return (
-      <ItineraryList/>
-    );
-  }
+  // renderItineraries = () => {
+  //   console.log(this.context.store.route);
+  //   if (!this.context.store.route) return null;
+  //   return (
+      
+  //   );
+  // }
 
   renderTimePicker = () => {
     return (
@@ -129,6 +133,7 @@ class VizMenu extends React.Component<any, VizMenuState> {
   }
 
   render() {
+    console.log(this.context.store.route);
     return (
       <div className="vizmenu">
         {this.renderTripSelector()}

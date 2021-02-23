@@ -1,16 +1,18 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import logo from './logo.svg';
-import VizStore from './store/store';
 import Map from './components/Map/Map';
 import VizMenu from './components/VizMenu/VizMenu';
 import RightMenu from './components/RightMenu/RightMenu';
 import './App.css';
+import { storeContext } from './store';
 
 @observer
 class App extends React.Component {
+  static contextType = storeContext;
+
   displayTrip = (tripJkey: string) => {
-    VizStore.tripJkey = tripJkey;
+    this.context.store.tripJkey = tripJkey;
   }
 
   // return (

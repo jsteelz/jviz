@@ -1,4 +1,4 @@
-import { observable, computed } from 'mobx';
+import { observable, action } from 'mobx';
 import { Route } from '../components/common/GtfsTypes';
 
 class VizStore {
@@ -6,6 +6,11 @@ class VizStore {
   @observable tripJkey : string = '';
   @observable date : string = '';
   @observable time : string = '';
+
+  @action
+  updateRoute(route: Route | undefined) {
+    this.route = route;
+  }
 }
 
-export default new VizStore();
+export default VizStore;

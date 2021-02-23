@@ -2,11 +2,11 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import './ItineraryList.css';
 import getJsonData from '../common/getJsonData';
-import { Route } from '../common/GtfsTypes';
-import VizStore from '../../store/store';
+import { storeContext } from '../../store';
 
 @observer
 class ItineraryList extends React.Component {
+  static contextType = storeContext;
 
   getMonth(month: string) {
     if (month === '01') return 'January';
@@ -34,25 +34,24 @@ class ItineraryList extends React.Component {
 
   renderDateAndTime() {
     let toReturn = '';
-    if (VizStore.date) {
-      toReturn += ` on ${this.prettyPrintDate(VizStore.date)}`;
+    if (this.context.store.date) {
+      toReturn += ` on ${this.prettyPrintDate(this.context.store.date)}`;
     }
-    if (VizStore.time) {
-      toReturn += ` at ${VizStore.time}`;
+    if (this.context.store.time) {
+      toReturn += ` at ${this.context.store.time}`;
     }
     return toReturn;
   }
 
   render () {
-    console.log(VizStore.route);
-    if (!VizStore.route) return null;
+    if (!this.context.store.route) return null;
     return (
       <div className="itinerarylistparent">
         <div className="itinerarylisttitle">
           Showing all itineraries for route
           <span className="route-itinerary"> {
-            VizStore.route.route_short_name ? VizStore.route.route_short_name
-              : VizStore.route.route_long_name
+            this.context.store.route.route_short_name ? this.context.store.route.route_short_name
+              : this.context.store.route.route_long_name
           }</span>
           {this.renderDateAndTime()}:
         </div>
