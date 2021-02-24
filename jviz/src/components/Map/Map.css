@@ -10,3 +10,50 @@
 .stopname {
   font-weight: bold;
 }
+
+.leaflet-popup-close-button, .leaflet-popup-tip {
+  display: none;
+}
+
+.leaflet-popup-tip, .leaflet-tooltip-top::before {
+  display: none;
+}
+
+.leaflet-tooltip {
+  border: 2px solid #30B566;
+  border-radius: 5px;
+  cursor: default;
+  font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px;
+  vertical-align: center;
+  background-color: white;
+  color: #14446b;
+}
+
+.leaflet-popup {
+  padding: 0px;
+  border: 2px solid #30B566;
+  border-radius: 5px;
+  cursor: default;
+}
+
+.leaflet-popup-content-wrapper {
+  padding: none;
+  border-radius: 5px;
+}
+
+.leaflet-popup-content {
+  font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;
+  max-width: 250px;
+  font-size: 14px;
+  padding-top: 1px;
+  padding-bottom: 0px;
+  padding-right: 3px;
+  padding-left: 3px;
+  vertical-align: center;
+  background-color: white;
+  margin: 5px;
+  color: #14446b;
+}

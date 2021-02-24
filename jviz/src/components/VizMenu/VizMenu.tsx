@@ -38,7 +38,7 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   }
 
   async componentDidMount() {
-    const tripJkeyByTripId = getJsonData(`.visualizefiles/trips/trip_jkey_by_trip_id.json`);
+    const tripJkeyByTripId = await getJsonData(`.visualizefiles/trips/trip_jkey_by_trip_id.json`);
 
     this.setState({
       hasLoadedTripMappings: true,

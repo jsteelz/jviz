@@ -38,12 +38,14 @@ class App extends React.Component<any, AppState> {
   onSelectDate = (selectedDate : string) => {
     this.setState({
       currentDate: selectedDate,
+      currentTrip: '',
     });
   }
 
   onSelectTime = (selectedTime : string) => {
     this.setState({
       currentTime: selectedTime,
+      currentTrip: '',
     });
   }
 

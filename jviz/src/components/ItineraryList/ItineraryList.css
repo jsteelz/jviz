@@ -41,3 +41,8 @@
   color: #30b566;
   font-weight: bold;
 }
+
+.loading-itineraries {
+  padding-top: 5px;
+  font-size: 14px;
+}

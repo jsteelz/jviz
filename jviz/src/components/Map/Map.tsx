@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { Tooltip, MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import StopIcon from './StopIcon';
 import getJsonData from '../common/getJsonData';
 import './Map.css';
@@ -175,12 +175,15 @@ class Map extends React.Component<MapProps, MapState> {
         icon={StopIcon}
         key={`stop-marker-${stop.id}`}
       >
-        <Popup 
+        <Tooltip
+          permanent
+          direction="top"
+          opacity={1}
+          offset={[0, -7]}
           key={`stop-time-popup-${stop.id}-${stop.time}`}
-          autoClose={false} // does not work as intended.
         >
           <span className="time">{stop.time}</span>
-        </Popup>
+        </Tooltip>
         <Popup key={`stop-popup-${stop.id}`}>
           <span className="stopname">{stop.name}</span> ({stop.id}) <br />
           {stop.position.lat}, {stop.position.lng}
@@ -203,6 +206,7 @@ class Map extends React.Component<MapProps, MapState> {
         scrollWheelZoom={true}
         key={`${JSON.stringify(this.state.bounds)}-${this.props.tripJkey}`}
         bounds={this.state.bounds ? this.state.bounds : [[-90, 180], [90, 180]]}
+        boundsOptions={this.state.bounds ? { padding: [250, 25]} : {}}
       >
         <TileLayer
           key="tileLayer"
