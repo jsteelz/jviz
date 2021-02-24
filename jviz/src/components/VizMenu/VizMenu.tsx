@@ -160,7 +160,7 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   renderItineraries = () => {
     if (!this.state.currentRoute) return null;
     return (
-      <ItineraryList
+      <ItineraryList key={`${this.state.currentRoute}-${this.state.currentDate}-${this.state.currentTime}`}
         route={this.state.currentRoute}
         date={this.state.currentDate}
         time={this.state.currentTime}

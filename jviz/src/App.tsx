@@ -68,6 +68,7 @@ class App extends React.Component<any, AppState> {
       <div>
         <Map
           tripJkey={this.state.currentTrip}
+          key={this.state.currentTrip}
         />
         <VizMenu
           onSelectDate={this.onSelectDate}
