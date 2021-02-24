@@ -1,31 +1,53 @@
 import React from 'react';
-import { observer } from 'mobx-react';
 import './VizMenu.css';
 import ValidatedInput from '../ValidatedInput/ValidatedInput';
 import SearchableList from '../SearchableList/SearchableList';
 import ItineraryList from '../ItineraryList/ItineraryList';
 import { Route } from '../common/GtfsTypes';
-import getJsonData from '../../components/common/getJsonData';
-import { storeContext } from '../../store';
+import getJsonData from '../common/getJsonData';
 
-interface VizMenuState {
+interface VizMenuProps {
   routes: Route[];
+  onSelectDate(date: string): void;
+  onSelectTime(time: string): void;
+  onSelectRoute(route: Route | undefined): void;
+  onSelectTrip(trip: string): void;
 }
 
-@observer
-class VizMenu extends React.Component<any, VizMenuState> {
-  static contextType = storeContext;
+interface VizMenuState {
+  currentRoute: Route | undefined;
+  currentDate: string;
+  currentTime: string;
+  currentTrip: string;
+  hasLoadedTripMappings: boolean;
+  tripJkeyByTripId: any;
+}
 
+class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   constructor(props: any) {
     super(props);
 
     this.state = {
-      routes: [],
-    }
+      currentRoute: undefined,
+      currentDate: '',
+      currentTime: '',
+      currentTrip: '',
+      hasLoadedTripMappings: false,
+      tripJkeyByTripId: undefined,
+    };
+  }
+
+  async componentDidMount() {
+    const tripJkeyByTripId = getJsonData(`.visualizefiles/trips/trip_jkey_by_trip_id.json`);
+
+    this.setState({
+      hasLoadedTripMappings: true,
+      tripJkeyByTripId: tripJkeyByTripId,
+    });
   }
 
   createListElements = () => {
-    return this.state.routes.map((route) => {
+    return this.props.routes.map((route) => {
       return {
         id: route.route_jkey,
         listKey: route.route_short_name,
@@ -34,17 +56,14 @@ class VizMenu extends React.Component<any, VizMenuState> {
     });
   }
 
-  async componentDidMount() {
-    const routeListInfo = await getJsonData('.visualizefiles/routes/route_list_info.json');
+  routeSelected = async (routeJkey: string) => {
+    const currentRoute = this.props.routes.find((route) => route.route_jkey === routeJkey);
 
     this.setState({
-      routes: routeListInfo,
+      currentRoute: currentRoute,
     });
-  }
 
-  routeSelected = (routeJkey: string) => {
-    this.context.store.updateRoute(this.state.routes.find((route) => route.route_jkey === routeJkey));
-    console.log(this.context.store.route);
+    this.props.onSelectRoute(currentRoute);
   }
 
   // Todo: make the date and time checkers stricter
@@ -59,11 +78,15 @@ class VizMenu extends React.Component<any, VizMenuState> {
   }
 
   onDateEntered = (date: string) => {
-    this.context.store.date = date;
+    this.setState({
+      currentDate: date,
+    });
+
+    this.props.onSelectDate(date);
   }
 
   onTimeEntered = (time: string) => {
-    let date = this.context.store.date;
+    let date = this.state.currentDate;
     if (!date) {
       const dateObj = new Date();
       let day = String(dateObj.getDate());
@@ -73,9 +96,42 @@ class VizMenu extends React.Component<any, VizMenuState> {
       const year = String(dateObj.getFullYear());
       date = `${year}${month}${day}`;
     }
-    this.context.store.time = time;
-    this.context.store.date = date;
-    console.log(this.context.store.time);
+
+    this.setState({
+      currentDate: date,
+    });
+  
+    this.setState({
+      currentTime: time,
+    });
+
+    this.props.onSelectDate(date);
+    this.props.onSelectTime(time);
+  }
+
+  onResetRoutes = () => {
+    this.setState({
+      currentRoute: undefined,
+      currentTrip: '',
+    });
+
+    this.props.onSelectRoute(undefined);
+  };
+
+  onTripEntered = (tripId: string) => {
+    this.onTripSelected(this.state.tripJkeyByTripId[tripId]);
+  }
+
+  tripIdIsValid = (tripId: string) => {
+    return this.state.tripJkeyByTripId[tripId] ? true : false;
+  }
+
+  onTripSelected = (tripJkey: string) => {
+    this.setState({
+      currentTrip: tripJkey
+    });
+
+    this.props.onSelectTrip(tripJkey);
   }
 
   renderDatePicker = () => {
@@ -96,17 +152,22 @@ class VizMenu extends React.Component<any, VizMenuState> {
         title="route"
         listElements={this.createListElements()}
         onElementClicked={this.routeSelected}
+        onReset={this.onResetRoutes}
       />
     );
   }
 
-  // renderItineraries = () => {
-  //   console.log(this.context.store.route);
-  //   if (!this.context.store.route) return null;
-  //   return (
-      
-  //   );
-  // }
+  renderItineraries = () => {
+    if (!this.state.currentRoute) return null;
+    return (
+      <ItineraryList
+        route={this.state.currentRoute}
+        date={this.state.currentDate}
+        time={this.state.currentTime}
+        onTripClicked={this.onTripSelected}
+      />
+    );
+  }
 
   renderTimePicker = () => {
     return (
@@ -124,24 +185,28 @@ class VizMenu extends React.Component<any, VizMenuState> {
     return (
       <ValidatedInput
         title="input a trip id"
-        validateInput={() => true}
-        invalidMessage=''
-        onEnterData={() => null}
+        validateInput={this.state.tripJkeyByTripId ? this.tripIdIsValid : () => true}
+        invalidMessage='invalid trip id entered'
+        onEnterData={this.state.tripJkeyByTripId ? this.onTripEntered : () => null}
         placeholder="enter a trip id"
       />
     );
   }
 
   render() {
-    console.log(this.context.store.route);
-    return (
+    if (!this.state.hasLoadedTripMappings) return (
       <div className="vizmenu">
+        loading...
+      </div>
+    );
+    return (
+     <div className="vizmenu">
         {this.renderTripSelector()}
         <br/>or select:
         {this.renderDatePicker()}
         {this.renderTimePicker()}
         {this.renderRoutes()}
-        <ItineraryList/>
+        {this.renderItineraries()}
       </div>
     );
   }

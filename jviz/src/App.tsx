@@ -1,70 +1,84 @@
 import React from 'react';
-import { observer } from 'mobx-react';
-import logo from './logo.svg';
 import Map from './components/Map/Map';
 import VizMenu from './components/VizMenu/VizMenu';
 import RightMenu from './components/RightMenu/RightMenu';
 import './App.css';
-import { storeContext } from './store';
+import { Route } from './components/common/GtfsTypes';
+import getJsonData from './components/common/getJsonData';
 
-@observer
-class App extends React.Component {
-  static contextType = storeContext;
+interface AppState {
+  currentDate: string;
+  currentTime: string;
+  currentRoute: Route | undefined;
+  currentTrip: string;
+  routes: Route[];
+}
 
-  displayTrip = (tripJkey: string) => {
-    this.context.store.tripJkey = tripJkey;
+class App extends React.Component<any, AppState> {
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      currentDate: '',
+      currentTime: '',
+      currentRoute: undefined,
+      currentTrip: '',
+      routes: [],
+    };
   }
 
-  // return (
-  //   <div className="App">
-  //     <header className="App-header">
-  //       <img src={logo} className="App-logo" alt="logo" />
-  //       <p>
-  //         Edit <code>src/App.tsx</code> and save to reload.
-  //       </p>
-  //       <a
-  //         className="App-link"
-  //         href="https://reactjs.org"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         Learn React
-  //       </a>
-  //     </header>
-  //   </div>
-  // );
+  async componentDidMount() {
+    const routeListInfo = await getJsonData('.visualizefiles/routes/route_list_info.json');
 
-  // testing
-  render() {
-    // for testing purposes only
-    const stops = [
-      {
-        position: {lat: 47.6118013, lng: -122.335167},
-        name: 'test 1',
-        id: 'test 1'
-      },
-      {
-        position: {lat: 47.608013, lng: -122.325167},
-        name: 'test 2',
-        id: 'test 2'
-      }
-    ];
+    this.setState({
+      routes: routeListInfo,
+    });
+  }
 
-    const shape = [{lat: 47.608013, lng: -122.325167}, {lat: 47.6118013, lng: -122.335167}];
+  onSelectDate = (selectedDate : string) => {
+    this.setState({
+      currentDate: selectedDate,
+    });
+  }
+
+  onSelectTime = (selectedTime : string) => {
+    this.setState({
+      currentTime: selectedTime,
+    });
+  }
+
+  onSelectRoute = (selectedRoute : Route | undefined) => {
+    let currentTrip = this.state.currentTrip;
+    if (selectedRoute === undefined) currentTrip = '';
   
+    this.setState({
+      currentRoute: selectedRoute,
+      currentTrip: currentTrip,
+    });
+  }
+
+  onSelectTrip = (selectedTrip : string) => {
+    this.setState({
+      currentTrip: selectedTrip,
+    });
+  }
+
+  render() {
     return (
       <div>
         <Map
-          center={{lat: 47.608013, lng: -122.335167}}
-          shape={shape}
-          stops={stops}
+          tripJkey={this.state.currentTrip}
         />
         <VizMenu
-          displayTrip={this.displayTrip}
+          onSelectDate={this.onSelectDate}
+          onSelectTime={this.onSelectTime}
+          onSelectRoute={this.onSelectRoute}
+          onSelectTrip={this.onSelectTrip}
+          routes={this.state.routes}
         />
         <RightMenu
-          routeJkey={/*this.state.activeRouteJkey */ '218ac4a63e12f735131c342f1cd0335e' }
-          tripJkey={/* this.state.activeTripJkey */ '662a6ef12a11b08d02f470710e4d40c7'}
+          route={this.state.currentRoute}
+          tripJkey={this.state.currentTrip}
           date="20210203"
         />
       </div>

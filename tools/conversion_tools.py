@@ -299,10 +299,9 @@ def read_trips(trips_path, trips_dir, routes_obj):
           except:
             continue
 
-  out_path = os.path.join(trips_dir, 'trip_jkey_by_trip_id.js')
+  out_path = os.path.join(trips_dir, 'trip_jkey_by_trip_id.json')
   with open(out_path, 'w') as out:
-    out_string = 'const tripJkeyByTripId = ' + json.dumps(trip_jkey_by_trip_id) + ';'
-    out.write(out_string)
+    json.dump(trip_jkey_by_trip_id, out)
 
   return [trips_obj, trip_jkey_by_trip_id]
 

@@ -4,7 +4,9 @@ async function getJsonData(url: string) {
   if (!res.ok) {
     const message = `An error has occured while fetching json data: ${res.status}`;
     // throw new Error(message);
-    console.log('message');
+    console.log(message, url);
+
+    return null;
   }
 
   const json = await res.json();

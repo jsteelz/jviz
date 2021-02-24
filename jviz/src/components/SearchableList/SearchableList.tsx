@@ -11,6 +11,7 @@ interface ListProps {
   title: string;
   listElements: ListElement[];
   onElementClicked(id: string): void;
+  onReset(): void;
 }
   
 interface ListState {
@@ -71,7 +72,7 @@ class SearchableList extends React.Component<ListProps, ListState> {
       selectedElement: undefined,
     });
 
-    this.props.onElementClicked('');
+    this.props.onReset();
   }
 
   renderListElement(element: ListElement) {

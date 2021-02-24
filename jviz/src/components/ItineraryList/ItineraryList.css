@@ -15,3 +15,29 @@
 .route-itinerary {
   font-weight: bold;
 }
+
+.itinerary-name {
+  font-size: 14px;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px solid #91a5b0;
+}
+
+.trips-list {
+  margin-top: 5px;
+}
+
+.departure-time, .departure-time-selected {
+  font-size: 14px;
+  cursor: pointer;
+  padding-right: 10px;
+}
+
+.departure-time {
+  color: #91a5b0;
+}
+
+.departure-time-selected {
+  color: #30b566;
+  font-weight: bold;
+}

@@ -3,22 +3,28 @@ import FileInfo from '../FileInfo/FileInfo';
 import ShadedCalendar from '../ShadedCalendar/ShadedCalendar';
 import CollapsibleElement from '../CollapsibleElement/CollapsibleElement';
 import './RightMenu.css';
+import { Route } from '../common/GtfsTypes';
 
 interface RightMenuProps {
-  routeJkey: string;
+  route: Route | undefined;
   tripJkey: string;
   date: string;
 }
 
 class RightMenu extends React.Component<RightMenuProps> {
+  async componentDidMount() {
+    // todo: if trip is defined but route isn't, get route jkey and show route info
+  }
+
   renderRouteInfo() {
-    if (!this.props.routeJkey) return null;
+    if (!this.props.route) return null;
     return (
       <CollapsibleElement
         title="routes.txt"
+        key={this.props.route.route_jkey}
         content={
           <FileInfo
-            requestUrl={`.visualizefiles/routes/${this.props.routeJkey}.json`}
+            requestUrl={`.visualizefiles/routes/${this.props.route.route_jkey}.json`}
             fieldsToExclude={['route_jkey', 'sample_trip_jkeys']}
           />
         }
@@ -31,6 +37,7 @@ class RightMenu extends React.Component<RightMenuProps> {
     return (
       <CollapsibleElement
         title="trips.txt"
+        key={this.props.tripJkey}
         content={
           <FileInfo
             requestUrl={`.visualizefiles/trips/${this.props.tripJkey}.json`}
@@ -84,7 +91,7 @@ class RightMenu extends React.Component<RightMenuProps> {
   }
   
   render() {
-    if (!this.props.routeJkey && !this.props.tripJkey) return null;
+    if (!this.props.route && !this.props.tripJkey) return null;
     return (
     <div className="rightmenu">
       {this.renderRouteInfo()}
