@@ -35,7 +35,7 @@ class ItineraryList extends React.Component<ItineraryListProps, ItineraryListSta
   }
 
   async componentDidMount() {
-    let tripsByItineraryId;
+    let tripsByItineraryId: any;
     if (!this.props.date) {
       tripsByItineraryId = await loadAllRouteItins(this.props.route.route_jkey);
     } else if (!this.props.time) {
@@ -43,6 +43,10 @@ class ItineraryList extends React.Component<ItineraryListProps, ItineraryListSta
     } else {
       tripsByItineraryId = await loadAllRouteItinsAtTime(this.props.route.route_jkey, this.props.date, this.props.time);
     }
+
+    Object.keys(tripsByItineraryId).forEach((itineraryId) => {
+      tripsByItineraryId[itineraryId].sort((a: any, b: any) => a['departure_time'].localeCompare(b['departure_time']));
+    });
 
     const itineraryInfo: any = {};
     for (const itineraryId of Object.keys(tripsByItineraryId)) {
@@ -113,6 +117,27 @@ class ItineraryList extends React.Component<ItineraryListProps, ItineraryListSta
     );
   }
 
+  renderNumberOfItineraries(itineraryId: string) {
+    const numberOfItineraries = this.state.tripsByItineraryId[itineraryId].length;
+    const numberString = `${String(numberOfItineraries)} ${numberOfItineraries === 1 ? 'trip' : 'trips'}`
+
+    if (this.props.time) {
+      return (
+        <div className="number-of-trips-in-itinerary">
+          {`${numberString} starting within selected hour`}
+        </div>
+      );
+    } else if (this.props.date) {
+      return (
+        <div className="number-of-trips-in-itinerary">
+          {`${numberString} on selected date`}
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
   renderItinerary(itineraryId: string) {
     return (
       <div
@@ -122,8 +147,9 @@ class ItineraryList extends React.Component<ItineraryListProps, ItineraryListSta
         <div className="itinerary-name">
           {`${this.state.itineraryInfoByItineraryId[itineraryId]['itinerary_name']}:`}
         </div>
+        {this.renderNumberOfItineraries(itineraryId)}
         <div className="trips-list">
-          {this.state.tripsByItineraryId[itineraryId].map((trip: any) => {
+          {this.state.tripsByItineraryId[itineraryId].slice(0, 3).map((trip: any) => {
             return (
               <span
                 key={trip['trip_jkey']}

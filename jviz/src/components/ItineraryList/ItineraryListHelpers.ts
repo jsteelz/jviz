@@ -2,7 +2,7 @@ import getJsonData from '../common/getJsonData';
 
 export async function loadAllRouteItins(routeJkey: string) {
   const routeInfo = await getJsonData(`.visualizefiles/routes/${routeJkey}.json`);
-  return await groupTripsByItineraryAndDisplay(routeInfo['sample_trip_jkeys'], routeJkey);
+  return await groupTripsByItinerary(routeInfo['sample_trip_jkeys'], routeJkey);
 }
 
 export async function loadAllRouteItinsForDate(routeJkey: string, date: string) {
@@ -13,13 +13,13 @@ export async function loadAllRouteItinsForDate(routeJkey: string, date: string) 
     time = time.length === 1 ? `0${time}:00` : `${time}:00`;
     trips = trips.concat(await getAllTripsAtTime(serviceJkeys, routeJkey, time));
   }
-  return await groupTripsByItineraryAndDisplay(trips, routeJkey);
+  return await groupTripsByItinerary(trips, routeJkey);
 }
 
 export async function loadAllRouteItinsAtTime(routeJkey: string, date: string, time: string) {
   const serviceJkeys = await getJsonData(`.visualizefiles/service_jkeys_by_date/${date}.json`);
   const trips = await getAllTripsAtTime(serviceJkeys, routeJkey, time);
-  return await groupTripsByItineraryAndDisplay(trips, routeJkey);
+  return await groupTripsByItinerary(trips, routeJkey);
 }
 
 async function getAllTripsAtTime(serviceJkeys: string[], routeJkey: string, timeToUse: string) {
@@ -37,21 +37,19 @@ async function getAllTripsAtTime(serviceJkeys: string[], routeJkey: string, time
   return trips;
 }
 
-async function groupTripsByItineraryAndDisplay(trips: string[], routeJkey: string) {
-  const first3TripsByItinId : any = {};
+async function groupTripsByItinerary(trips: string[], routeJkey: string) {
+  const tripsByItineraryId : any = {};
 
   for (const tripJkey of trips) {
     const trip = await getJsonData(`.visualizefiles/trips/${tripJkey}.json`);
 
     const itineraryId = trip['itinerary_id'];
 
-    if (!first3TripsByItinId[itineraryId]) {
-      first3TripsByItinId[itineraryId] = [];
+    if (!tripsByItineraryId[itineraryId]) {
+      tripsByItineraryId[itineraryId] = [];
     }
-    if (first3TripsByItinId[itineraryId].length < 3) {
-      first3TripsByItinId[itineraryId].push(trip);
-    }
+    tripsByItineraryId[itineraryId].push(trip);
   }
 
-  return first3TripsByItinId;
+  return tripsByItineraryId;
 }

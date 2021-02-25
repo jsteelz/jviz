@@ -23,6 +23,12 @@
   border-top: 1px solid #91a5b0;
 }
 
+.number-of-trips-in-itinerary {
+  font-size: 14px;
+  margin-top: 5px;
+  color: #30b566;
+}
+
 .trips-list {
   margin-top: 5px;
 }
