@@ -82,7 +82,7 @@ class SearchableList extends React.Component<ListProps, ListState> {
         key={element.id}
         onClick={(e: React.MouseEvent) => this.handleClick(e, element.id)}
       >
-        <span className="listkey">{element.listKey}</span>{element.listValue}
+        <span className="listkey">{element.listKey}</span><span className="list-value">{element.listValue}</span>
       </div>
     );
   }

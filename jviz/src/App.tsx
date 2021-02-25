@@ -80,9 +80,11 @@ class App extends React.Component<any, AppState> {
           routes={this.state.routes}
         />
         <RightMenu
+          key={`${this.state.currentDate}-${this.state.currentTrip}-${this.state.currentRoute}`}
           route={this.state.currentRoute}
+          routes={this.state.routes}
           tripJkey={this.state.currentTrip}
-          date="20210203"
+          date={this.state.currentDate}
         />
       </div>
     );

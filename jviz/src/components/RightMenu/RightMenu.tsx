@@ -3,28 +3,81 @@ import FileInfo from '../FileInfo/FileInfo';
 import ShadedCalendar from '../ShadedCalendar/ShadedCalendar';
 import CollapsibleElement from '../CollapsibleElement/CollapsibleElement';
 import './RightMenu.css';
+import getJsonData from '../common/getJsonData';
 import { Route } from '../common/GtfsTypes';
 
 interface RightMenuProps {
   route: Route | undefined;
   tripJkey: string;
   date: string;
+  routes: Route[];
 }
 
-class RightMenu extends React.Component<RightMenuProps> {
+interface RightMenuState {
+  shadedDays: Set<number> | undefined;
+  route: Route | undefined;
+}
+
+class RightMenu extends React.Component<RightMenuProps, RightMenuState> {
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      shadedDays: undefined,
+      route: undefined,
+    };
+  }
+
   async componentDidMount() {
-    // todo: if trip is defined but route isn't, get route jkey and show route info
+    if (this.props.tripJkey) {
+      let route = undefined;
+      let shadedDays = undefined;
+      const tripInfo = await getJsonData(`.visualizefiles/trips/${this.props.tripJkey}.json`);
+
+      // if trip is defined but route isn't, get route jkey and show route info
+      if (!this.props.route) {
+        route = this.props.routes.find((route) => route.route_jkey === tripInfo['route_jkey']);
+      } else {
+        route = this.props.route;
+      }
+
+      if (this.props.date) {
+        shadedDays = new Set<number>();
+        const daysInMonth = new Date(
+          parseInt(this.props.date.substring(0, 4)),
+          parseInt(this.props.date.substring(4, 6)),
+          0
+        ).getDate();
+
+        for (let i = 1; i <= daysInMonth; i++) {
+          const dateToSearch = `${this.props.date.substring(0, 6)}${i < 10 ? `0${String(i)}` : String(i)}`;
+          const serviceJkeys = await getJsonData(`.visualizefiles/service_jkeys_by_date/${dateToSearch}.json`);
+
+          if (!serviceJkeys) continue;
+
+          if (serviceJkeys.includes(tripInfo['service_jkey'])) {
+            shadedDays.add(parseInt(dateToSearch.substring(6, 8)));
+          }
+        }
+      }
+
+      this.setState({
+        route: route,
+        shadedDays: shadedDays,
+      });
+    }
   }
 
   renderRouteInfo() {
-    if (!this.props.route) return null;
+    const route = this.props.route || this.state.route;
+    if (!route) return null;
     return (
       <CollapsibleElement
         title="routes.txt"
-        key={this.props.route.route_jkey}
+        key={route.route_jkey}
         content={
           <FileInfo
-            requestUrl={`.visualizefiles/routes/${this.props.route.route_jkey}.json`}
+            requestUrl={`.visualizefiles/routes/${route.route_jkey}.json`}
             fieldsToExclude={['route_jkey', 'sample_trip_jkeys']}
           />
         }
@@ -67,9 +120,7 @@ class RightMenu extends React.Component<RightMenuProps> {
   }
 
   renderShadedCalendar() {
-    // if (!this.props.date) return null;
-    // const year = parseInt(this.props.date.substring(0, 4));
-    // const month = parseInt(this.props.date.substring(4, 6));
+    if (this.state.shadedDays === undefined) return null;
     return (
       <CollapsibleElement
         title="dates active"
@@ -77,12 +128,12 @@ class RightMenu extends React.Component<RightMenuProps> {
           <div>
             {`days on which ${this.props.tripJkey ? 'selected trip' : 'selected route'} operates:`}
             <div className="month-header">
-              {`${this.getMonth(/*month*/ 4)} 2021`}
+              {`${this.getMonth(parseInt(this.props.date.substring(4, 6)))} 2021`}
             </div>
             <ShadedCalendar
-              year={/*year*/ 2021}
-              month={/*month*/ 4}
-              shadedDays={new Set([2, 15, 16, 23])}
+              year={parseInt(this.props.date.substring(0, 4))}
+              month={parseInt(this.props.date.substring(4, 6))}
+              shadedDays={this.state.shadedDays}
             />
           </div>
         }

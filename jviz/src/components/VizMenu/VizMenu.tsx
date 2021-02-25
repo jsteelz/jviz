@@ -119,6 +119,10 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   };
 
   onTripEntered = (tripId: string) => {
+    this.setState({
+      currentRoute: undefined,
+    });
+    this.props.onSelectRoute(undefined);
     this.onTripSelected(this.state.tripJkeyByTripId[tripId]);
   }
 
@@ -194,7 +198,7 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   }
 
   render() {
-    if (!this.state.hasLoadedTripMappings) return (
+    if (!this.state.hasLoadedTripMappings || !this.props.routes) return (
       <div className="vizmenu">
         loading...
       </div>

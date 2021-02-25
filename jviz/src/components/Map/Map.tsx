@@ -175,7 +175,7 @@ class Map extends React.Component<MapProps, MapState> {
         icon={StopIcon}
         key={`stop-marker-${stop.id}`}
       >
-        <Tooltip
+        {stop.time ? (<Tooltip
           permanent
           direction="top"
           opacity={1}
@@ -183,7 +183,7 @@ class Map extends React.Component<MapProps, MapState> {
           key={`stop-time-popup-${stop.id}-${stop.time}`}
         >
           <span className="time">{stop.time}</span>
-        </Tooltip>
+        </Tooltip>) : null}
         <Popup key={`stop-popup-${stop.id}`}>
           <span className="stopname">{stop.name}</span> ({stop.id}) <br />
           {stop.position.lat}, {stop.position.lng}
@@ -203,6 +203,7 @@ class Map extends React.Component<MapProps, MapState> {
     return (
       <MapContainer
         className="map"
+        zoomControl={false}
         scrollWheelZoom={true}
         key={`${JSON.stringify(this.state.bounds)}-${this.props.tripJkey}`}
         bounds={this.state.bounds ? this.state.bounds : [[-90, 180], [90, 180]]}

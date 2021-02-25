@@ -48,6 +48,10 @@
   padding-right: 5px;
 }
 
+.list-value {
+  font-size: 14px;
+}
+
 .backbutton {
   cursor: pointer;
   color: #91a5b0;
