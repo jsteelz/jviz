@@ -17,8 +17,10 @@ interface VizMenuProps {
 interface VizMenuState {
   currentRoute: Route | undefined;
   currentDate: string;
+  selectedDate: string; // the date can be implicit if a time is specified, but not a date
   currentTime: string;
   currentTrip: string;
+  today: string;
   hasLoadedTripMappings: boolean;
   tripJkeyByTripId: any;
 }
@@ -30,8 +32,10 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
     this.state = {
       currentRoute: undefined,
       currentDate: '',
+      selectedDate: '',
       currentTime: '',
       currentTrip: '',
+      today: '',
       hasLoadedTripMappings: false,
       tripJkeyByTripId: undefined,
     };
@@ -40,7 +44,16 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   async componentDidMount() {
     const tripJkeyByTripId = await getJsonData(`.visualizefiles/trips/trip_jkey_by_trip_id.json`);
 
+    const dateObj = new Date();
+    let day = String(dateObj.getDate());
+    if (day.length === 1) day = `0${day}`;
+    let month = String(dateObj.getMonth() + 1);
+    if (month.length === 1) month = `0${month}`;
+    const year = String(dateObj.getFullYear());
+    const today = `${year}${month}${day}`;
+
     this.setState({
+      today: today,
       hasLoadedTripMappings: true,
       tripJkeyByTripId: tripJkeyByTripId,
     });
@@ -78,30 +91,25 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   }
 
   onDateEntered = (date: string) => {
+    const dateToSet = date === '' && this.state.currentTime ? this.state.today : date;
+
     this.setState({
-      currentDate: date,
+      currentDate: dateToSet,
+      selectedDate: date,
     });
 
     this.props.onSelectDate(date);
   }
 
   onTimeEntered = (time: string) => {
-    let date = this.state.currentDate;
-    if (!date) {
-      const dateObj = new Date();
-      let day = String(dateObj.getDate());
-      if (day.length === 1) day = `0${day}`;
-      let month = String(dateObj.getMonth() + 1);
-      if (month.length === 1) month = `0${month}`;
-      const year = String(dateObj.getFullYear());
-      date = `${year}${month}${day}`;
-    }
+    let date;
+
+    if (!this.state.selectedDate && !time) date = '';
+    else if (!this.state.selectedDate && time) date = this.state.today;
+    else date = this.state.selectedDate;
 
     this.setState({
       currentDate: date,
-    });
-  
-    this.setState({
       currentTime: time,
     });
 
@@ -116,7 +124,7 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
     });
 
     this.props.onSelectRoute(undefined);
-  };
+  }
 
   onTripEntered = (tripId: string) => {
     this.setState({

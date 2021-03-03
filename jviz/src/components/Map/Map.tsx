@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip, MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
-import StopIcon from './StopIcon';
+import { stopIcon, circleIcon, squareIcon} from './StopIcon';
 import getJsonData from '../common/getJsonData';
 import './Map.css';
 
@@ -168,23 +168,26 @@ class Map extends React.Component<MapProps, MapState> {
     );
   }
 
-  renderStop = (stop: Stop) => {
+  renderStop = (stop: Stop, lastTime: string, icon: any) => {
     return (
       <Marker
         position={[stop.position.lat, stop.position.lng]}
-        icon={StopIcon}
+        icon={icon}
         key={`stop-marker-${stop.id}`}
       >
-        {stop.time ? (<Tooltip
+        {stop.time && lastTime !== stop.time ? (<Tooltip
           permanent
           direction="top"
           opacity={1}
-          offset={[0, -7]}
+          offset={[0, -5]}
           key={`stop-time-popup-${stop.id}-${stop.time}`}
         >
           <span className="time">{stop.time}</span>
         </Tooltip>) : null}
-        <Popup key={`stop-popup-${stop.id}`}>
+        <Popup
+          key={`stop-popup-${stop.id}`}
+          offset={[0, 10]}
+        >
           <span className="stopname">{stop.name}</span> ({stop.id}) <br />
           {stop.position.lat}, {stop.position.lng}
         </Popup>
@@ -192,11 +195,26 @@ class Map extends React.Component<MapProps, MapState> {
     );
   }
 
-  renderStops = () => {
+  renderIntermediateStops = () => {
     if (!this.state.stops.length) return null;
-    return this.state.stops.map((stop) => {
-      return this.renderStop(stop);
+    const intermediateStops = this.state.stops.slice(1, this.state.stops.length - 1);
+    return intermediateStops.map((stop, i) => {
+      return this.renderStop(stop, this.state.stops[i].time, stopIcon);
     });
+  }
+
+  renderFirstStop = () => {
+    if (!this.state.stops.length) return null;
+    return this.renderStop(this.state.stops[0], '', circleIcon);
+  }
+
+  renderLastStop = () => {
+    if (!this.state.stops.length) return null;
+    return this.renderStop(
+      this.state.stops[this.state.stops.length - 1],
+      this.state.stops[this.state.stops.length - 2].time,
+      squareIcon
+    );
   }
 
   render() {
@@ -215,7 +233,9 @@ class Map extends React.Component<MapProps, MapState> {
           url="https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.png"
         />
         {this.renderShape()}
-        {this.renderStops()}
+        {this.renderIntermediateStops()}
+        {this.renderLastStop()}
+        {this.renderFirstStop()}
       </MapContainer>
     );
   }
