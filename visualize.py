@@ -67,8 +67,5 @@ if __name__ == "__main__":
   Handler = http.server.SimpleHTTPRequestHandler
 
   with socketserver.TCPServer(("", PORT), Handler) as httpd:
-      print('go to localhost:8000/visualizer.html')
+      print('ready to serve visualize files at localhost:8000/.visualizefiles')
       httpd.serve_forever()
-
-  # catch sigterm, sigint, and then kill server and remove .visualizefiles dir
-  # shutil.rmtree('.visualizefiles')

@@ -5,7 +5,6 @@ import csv
 import datetime
 import re
 import hashlib
-from . import write_html
 
 # desired output
 # /itineraries:
@@ -158,8 +157,6 @@ def convert_routes(routes_path, out_dir):
       if not name_found:
         print("Both route_short_name and route_long_name missing. Will not visualize.")
         exit(1)
-    
-  write_html.write_html(routes_obj)
   
   route_list_info = []
   for route_jkey in routes_obj:
