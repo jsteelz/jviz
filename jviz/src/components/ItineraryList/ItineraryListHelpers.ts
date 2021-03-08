@@ -24,6 +24,7 @@ export async function loadAllRouteItinsAtTime(routeJkey: string, date: string, t
 
 async function getAllTripsAtTime(serviceJkeys: string[], routeJkey: string, timeToUse: string) {
   let trips : string[] = [];
+  if (!serviceJkeys) return [];
   for (const serviceJkey of serviceJkeys) {
     const searchKey = `${routeJkey}_${serviceJkey}`;
     const tripsByHour = await getJsonData(`.visualizefiles/trips_by_route_by_hour/${searchKey}.json`);

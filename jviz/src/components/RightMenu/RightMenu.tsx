@@ -2,6 +2,7 @@ import React from 'react';
 import FileInfo from '../FileInfo/FileInfo';
 import ShadedCalendar from '../ShadedCalendar/ShadedCalendar';
 import CollapsibleElement from '../CollapsibleElement/CollapsibleElement';
+import ScheduleTable from '../ScheduleTable/ScheduleTable';
 import './RightMenu.css';
 import getJsonData from '../common/getJsonData';
 import { Route } from '../common/GtfsTypes';
@@ -15,6 +16,7 @@ interface RightMenuProps {
 
 interface RightMenuState {
   shadedDays: Set<number> | undefined;
+  itinerarySchedule: any;
   route: Route | undefined;
 }
 
@@ -24,6 +26,7 @@ class RightMenu extends React.Component<RightMenuProps, RightMenuState> {
 
     this.state = {
       shadedDays: undefined,
+      itinerarySchedule: undefined,
       route: undefined,
     };
   }
@@ -32,6 +35,7 @@ class RightMenu extends React.Component<RightMenuProps, RightMenuState> {
     if (this.props.tripJkey) {
       let route = undefined;
       let shadedDays = undefined;
+      let itinerarySchedule = undefined;
       const tripInfo = await getJsonData(`.visualizefiles/trips/${this.props.tripJkey}.json`);
 
       // if trip is defined but route isn't, get route jkey and show route info
@@ -42,30 +46,69 @@ class RightMenu extends React.Component<RightMenuProps, RightMenuState> {
       }
 
       if (this.props.date) {
-        shadedDays = new Set<number>();
-        const daysInMonth = new Date(
-          parseInt(this.props.date.substring(0, 4)),
-          parseInt(this.props.date.substring(4, 6)),
-          0
-        ).getDate();
-
-        for (let i = 1; i <= daysInMonth; i++) {
-          const dateToSearch = `${this.props.date.substring(0, 6)}${i < 10 ? `0${String(i)}` : String(i)}`;
-          const serviceJkeys = await getJsonData(`.visualizefiles/service_jkeys_by_date/${dateToSearch}.json`);
-
-          if (!serviceJkeys) continue;
-
-          if (serviceJkeys.includes(tripInfo['service_jkey'])) {
-            shadedDays.add(parseInt(dateToSearch.substring(6, 8)));
-          }
+        shadedDays = await this.getShadedDays(tripInfo['service_jkey']);
+        if (route) {
+          itinerarySchedule = await this.getItinerarySchedule(route.route_jkey, tripInfo['service_jkey']);
         }
       }
 
       this.setState({
         route: route,
         shadedDays: shadedDays,
+        itinerarySchedule: itinerarySchedule,
       });
     }
+  }
+
+  async getShadedDays(serviceJkey: string) {
+    const shadedDays = new Set<number>();
+    const daysInMonth = new Date(
+      parseInt(this.props.date.substring(0, 4)),
+      parseInt(this.props.date.substring(4, 6)),
+      0
+    ).getDate();
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dateToSearch = `${this.props.date.substring(0, 6)}${i < 10 ? `0${String(i)}` : String(i)}`;
+      const serviceJkeys = await getJsonData(`.visualizefiles/service_jkeys_by_date/${dateToSearch}.json`);
+
+      if (!serviceJkeys) continue;
+
+      if (serviceJkeys.includes(serviceJkey)) {
+        shadedDays.add(parseInt(dateToSearch.substring(6, 8)));
+      }
+    }
+
+    return shadedDays;
+  }
+
+  async getItinerarySchedule(routeJkey: string, serviceJkey: string) {
+    const departureTimes: { [index:string] : any } = {};
+
+    const searchKey = `${routeJkey}_${serviceJkey}`;
+    const tripInfo = await getJsonData(`.visualizefiles/trips/${this.props.tripJkey}.json`);
+
+    if (!tripInfo) return undefined;
+    const itineraryId = tripInfo['itinerary_id'];
+
+    const tripsByHour = await getJsonData(`.visualizefiles/trips_by_route_by_hour/${searchKey}.json`);
+
+    if (!tripsByHour || Object.keys(tripsByHour).length === 0) return undefined;
+
+    for (const hour of Object.keys(tripsByHour)) {
+      departureTimes[hour] = [];
+      const trips = tripsByHour[hour];
+      for (const tripToCompare of trips) {
+        const tripToCompareInfo = await getJsonData(`.visualizefiles/trips/${tripToCompare}.json`);
+        if (!tripToCompareInfo) continue;
+
+        if (tripToCompareInfo['itinerary_id'] === itineraryId) {
+          departureTimes[hour].push(tripToCompareInfo['departure_time'].substr(3));
+        }
+      }
+    }
+
+    return departureTimes;
   }
 
   renderRouteInfo() {
@@ -140,6 +183,21 @@ class RightMenu extends React.Component<RightMenuProps, RightMenuState> {
       />
     )
   }
+
+  renderItinerarySchedule() {
+    if (!this.props.tripJkey || !this.props.date) return null;
+    return (
+      <CollapsibleElement
+        title="itinerary schedule"
+        key={`table-${this.props.tripJkey}-${this.props.date}`}
+        content={
+          <ScheduleTable
+            departureTimesByHour={this.state.itinerarySchedule}
+          />
+        }
+      />
+    );
+  }
   
   render() {
     if (!this.props.route && !this.props.tripJkey) return null;
@@ -148,6 +206,7 @@ class RightMenu extends React.Component<RightMenuProps, RightMenuState> {
       {this.renderRouteInfo()}
       {this.renderTripInfo()}
       {this.renderShadedCalendar()}
+      {this.renderItinerarySchedule()}
     </div>
     );
   }

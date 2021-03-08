@@ -5,7 +5,7 @@ table {
   margin-top: 5px;
 }
 
-th, td {
+.calendar-header, .inactive-date, .shaded-date, .not-shaded-date {
   text-align: center;
   margin: auto;
   padding: none;
@@ -13,7 +13,7 @@ th, td {
   padding-bottom: 5px;
 }
 
-tr {
+.calendar-row {
   padding: none;
   margin: none;
 }

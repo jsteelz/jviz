@@ -171,6 +171,13 @@ class ItineraryList extends React.Component<ItineraryListProps, ItineraryListSta
         loading itineraries...
       </div>
     );
+    if (Object.keys(this.state.tripsByItineraryId).length === 0) {
+      return (
+        <div className="no-itineraries">
+          No itineraries found.
+        </div>
+      );
+    }
     return (
       <div className="itinerary-list">
         {Object.keys(this.state.tripsByItineraryId).map((itineraryId) => {

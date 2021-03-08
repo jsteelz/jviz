@@ -55,7 +55,7 @@ class ShadedCalendar extends React.Component<CalendarProps> {
     for (let i = startDay; i < startDay + 7; i++) daysToRender.push(i);
     return (
       // todo: add trip id to the row key
-      <tr key={`row-${startDay}`}>
+      <tr key={`row-${startDay}`} className="calendar-row">
         {daysToRender.map((day: number) => this.renderDay(day, daysInMonth))}
       </tr>
     );
@@ -75,14 +75,14 @@ class ShadedCalendar extends React.Component<CalendarProps> {
     return (
       <table>
         <thead>
-          <tr>
-            <th key="monday">M</th>
-            <th key="tuesday">T</th>
-            <th key="wednesday">W</th>
-            <th key="thursday">T</th>
-            <th key="friday">F</th>
-            <th key="saturday">S</th>
-            <th key="sunday">S</th>
+          <tr className="calendar-row">
+            <th className="calendar-header" key="monday">M</th>
+            <th className="calendar-header" key="tuesday">T</th>
+            <th className="calendar-header" key="wednesday">W</th>
+            <th className="calendar-header" key="thursday">T</th>
+            <th className="calendar-header" key="friday">F</th>
+            <th className="calendar-header" key="saturday">S</th>
+            <th className="calendar-header" key="sunday">S</th>
           </tr>
         </thead>
         <tbody>

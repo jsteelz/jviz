@@ -1,0 +1,29 @@
+.schedule-table-wrapper {
+  padding-top: 5px;
+}
+
+.hour, .departure-time-schedule-column {
+  padding: none;
+  width: auto;
+  text-align: left;
+  vertical-align: text-top;
+}
+
+.departure-time-row {
+  padding: none;
+  margin: none;
+}
+
+.hour {
+  padding: none;
+  text-align: right;
+  font-weight: bold;
+  width: 25px;
+}
+
+.departure-time-schedule {
+  padding: none;
+  padding-left: 10px;
+  font-size: 13px;
+  display: inline-table;
+}

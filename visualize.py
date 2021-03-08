@@ -10,7 +10,6 @@ def signal_handler(sig, frame):
   print('\n\nClosing visualizer, deleting visualizer files. Please wait a tiny bit.')
   try:
     shutil.rmtree('.visualizefiles')
-    os.remove('visualizer.html')
   except:
     print('No previous visualized files found on close. Weird.')
   exit(0)
