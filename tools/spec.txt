@@ -41,6 +41,11 @@ routes
     route_type (required)
     route_short_name (required if no route_long_name)
     route_long_name (required if no route_short_name)
+  a file (route_info) containing, for each route:
+    route_short_name
+    route_long_name
+    route_id
+    route_jkey
 
 service_jkeys_by_date
   one file per active date in the gtfs
