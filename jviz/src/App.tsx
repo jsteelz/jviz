@@ -28,11 +28,20 @@ class App extends React.Component<any, AppState> {
   }
 
   async componentDidMount() {
-    const routeListInfo = await getJsonData('.visualizefiles/routes/route_list_info.json');
+    let routeListInfo = await getJsonData('.visualizefiles/routes/route_list_info.json');
+
+    while (routeListInfo === null) {
+      await this.sleep(1000);
+      routeListInfo = await getJsonData('.visualizefiles/routes/route_list_info.json');
+    }
 
     this.setState({
       routes: routeListInfo,
     });
+  }
+
+  sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   onSelectDate = (selectedDate : string) => {

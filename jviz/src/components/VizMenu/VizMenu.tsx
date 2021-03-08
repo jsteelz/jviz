@@ -206,7 +206,7 @@ class VizMenu extends React.Component<VizMenuProps, VizMenuState> {
   }
 
   render() {
-    if (!this.state.hasLoadedTripMappings || !this.props.routes) return (
+    if (!this.state.hasLoadedTripMappings || this.props.routes.length === 0) return (
       <div className="vizmenu">
         loading...
       </div>
